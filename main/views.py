@@ -1,7 +1,5 @@
-import jwt
-import collections
-
-from django.shortcuts import render
+from django.shortcuts import render, reverse
+from django.http import HttpResponseRedirect
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import ListAPIView, CreateAPIView, DestroyAPIView, RetrieveUpdateDestroyAPIView, GenericAPIView
@@ -21,6 +19,27 @@ def index(request):
     return render(request, "main/index.html")
 
 
+def user_login(request):
+    if request.method == "POST":
+        username = request.POST["usernamee"]
+        password = request.POST["passwordd"]
+        user = auth.authenticate(request, username=username, password=password)
+
+        if user is not None:
+            auth.login(request, user)
+            return HttpResponseRedirect(reverse("index"))
+        else:
+            return render(request, "main/index.html", {
+                "message": "Incorrect username/password"
+            })
+    return render(request, "main/index.html")
+
+
+def user_logout(request):
+    auth.logout(request)
+    return HttpResponseRedirect(reverse("index"))
+
+
 class UserPagination(LimitOffsetPagination):
     default_limit = 3
     max_limit = 100
@@ -32,7 +51,7 @@ class UserList(ListAPIView):
 
     filter_backends = (DjangoFilterBackend, SearchFilter,)
     filter_fields = ('id', )
-    search_field = ('username', )
+    search_fields = ('username', )
     pagination_class = UserPagination
 
 
@@ -52,29 +71,3 @@ class UserCreate(CreateAPIView):
         else:
             data = serializer.errors
         return Response(data)
-
-
-class LoginView(GenericAPIView):
-    def post(self, request):
-        data = request.data
-        username = data.get("username", "")
-        password = data.get("password", "")
-
-        user = auth.authenticate(username=username, password=password)
-
-        if user:
-            auth_token = jwt.encode(
-                {"username": user.username}, settings.JWT_SECRET_KEY)
-            serializer = UserSerializer(user)
-            print(str(auth_token))
-            data = {
-                "user": serializer.data,
-                "token": auth_token,
-            }
-            return Response({
-                frozenset(data)
-            }, status=status.HTTP_200_OK)
-
-        return Response({
-            "detail": "Invalid Credentials"
-        }, status=status.HTTP_401_UNAUTHORIZED)

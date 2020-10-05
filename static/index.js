@@ -17,10 +17,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   $("#registration").on("submit", function (e) {
     e.preventDefault();
-    console.log("Register!");
 
     let csrfToken = $("input[name=csrfmiddlewaretoken]").val();
-    console.log(csrfToken);
 
     $.ajax({
       type: "POST",
@@ -37,42 +35,10 @@ document.addEventListener("DOMContentLoaded", () => {
       },
 
       success: function (response) {
-        console.log(response);
         document.querySelector("#registration").style.display = "none";
         document.querySelector("#login").style.display = "block";
         let message = document.querySelector(".message");
         message.innerHTML = `<h3 class="alert alert-info">Registration Success!</h3>`;
-        message.style.display = "block";
-      },
-
-      error: function (err) {
-        console.log(JSON.stringify(err));
-      },
-    });
-  });
-
-  $("#login").on("submit", function (e) {
-    e.preventDefault();
-    console.log("Login!");
-
-    let csrfToken = $("input[name=csrfmiddlewaretoken]").val();
-    console.log(csrfToken);
-
-    $.ajax({
-      type: "POST",
-      url: "/login",
-      data: {
-        username: $("#usernamee").val(),
-        password: $("#passwordd").val(),
-        csrfmiddlewaretoken: csrfToken,
-        credentials: "include",
-      },
-
-      success: function (response) {
-        console.log(response);
-        document.querySelector("#login").style.display = "none";
-        let message = document.querySelector(".message");
-        message.innerHTML = `<h3 class="alert alert-info">Login Success!</h3>`;
         message.style.display = "block";
       },
 

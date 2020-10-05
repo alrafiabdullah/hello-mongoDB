@@ -139,11 +139,5 @@ REST_FRAMEWORK = {
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny'
-    ],
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'main.backends.JWTAuthentication',
     ]
 }
-
-# JWT
-JWT_SECRET_KEY = data["JWT_SECRET_KEY"]
