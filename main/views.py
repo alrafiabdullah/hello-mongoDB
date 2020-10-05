@@ -1,11 +1,16 @@
+import jwt
+import collections
+
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.generics import ListAPIView, CreateAPIView, DestroyAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView, DestroyAPIView, RetrieveUpdateDestroyAPIView, GenericAPIView
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.exceptions import ValidationError
+from django.conf import settings
+from django.contrib import auth
 
 from .models import User
 from .serializers import UserSerializer
