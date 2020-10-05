@@ -1,9 +1,47 @@
 {% extends 'main/base.html' %}
+{% load static %}
+
+{% block staticfiles %}
+    <script src="{% static 'index.css' %}"></script>
+    <script src="{% static 'index.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+{% endblock staticfiles %}
 
 {% block bodyblock %}
     <div class="container">
-        <div class="jumbotron">
-            <h3>Welcome to Mongo!</h3>
-        </div>
+        {% if request.user.is_authenticated %}
+            <div class="jumbotron">
+                <h3>Welcome to Mongo, {{ request.user.first_name }} {{ request.user.last_name }}! 🎉</h3>
+            </div>
+            <div>
+                <a href="{% url 'logout' %}"><button class="btn btn-danger">Logout</button></a>
+            </div>
+        {% else %}
+            <div class="jumbotron">
+                <h3>Welcome to Mongo!</h3>
+            </div>
+            <button id="loginbtn" class="btn btn-info">Login</button>
+            <button id="registrationbtn" class="btn btn-info">Registration</button>
+            <div class="message"></div>
+            {% if message %}
+                <div class="alert alert-danger">{{message}}</div>
+            {% endif %}
+            <form id="login" action="{% url 'login' %}" method="POST">
+                {% csrf_token %}
+                <input class="form-control" type="text" placeholder="username" name="usernamee" required autofocus>
+                <input class="form-control" type="password" name="passwordd" placeholder="password" required>
+                <input class="btn btn-primary" type="submit">
+            </form>
+            <form id="registration" method="POST">
+                {% csrf_token %}
+                <input class="form-control" type="text" placeholder="first name" id="fname" required autofocus>
+                <input class="form-control" type="text" placeholder="last name" id="lname" required>
+                <input class="form-control" type="text" placeholder="username" id="username" required>
+                <input class="form-control" type="email" placeholder="email" id="email" required>
+                <input class="form-control" type="password" id="password" placeholder="password" required>
+                <input class="form-control" type="password" id="password2" placeholder="confirm password" required>
+                <input class="btn btn-primary" type="submit">
+            </form>
+        {% endif %}        
     </div>
 {% endblock bodyblock %}
